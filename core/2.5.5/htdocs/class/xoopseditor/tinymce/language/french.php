@@ -12,7 +12,7 @@
 */
 
 /*
- * Assocated with editor_registry.php
+ * Associated with editor_registry.php
  */
 // Name of the editor
 define("_XOOPS_EDITOR_TINYMCE","TinyMCE");

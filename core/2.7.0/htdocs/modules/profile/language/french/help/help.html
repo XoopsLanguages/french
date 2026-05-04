@@ -1,0 +1,50 @@
+<div class="outer" id="help-template">
+<h1 class="head">Aide : <a class="ui-corner-all tooltip" href="&lt;{$xoops_url}&gt;/modules/profile/admin/index.php" title="Back to the Administration of Profile"> Profil <img alt="Back to the Administration of Profile" src="&lt;{xoAdminIcons 'home.png'}&gt;"/></a></h1>
+ -----Contenu de l'aide ---------- 
+<h4 class="odd">DESCRIPTION</h4>
+<p class="even">Le module Profil permet de gérer les champs de profil utilisateur personnalisés.</p>
+<h4 class="odd">INSTALLER/DÉSINSTALLER</h4>
+<p>Aucune mesure particulière n'est nécessaire, suivez le processus d'installation standard – extrayez le dossier /profile dans le répertoire ../modules. Installez le module via Admin -&gt; Module système -&gt; Modules.</p>
+<p>Des instructions détaillées sur l'installation des modules sont disponibles dans le <a href="https://www.gitbook.com/book/xoops/xoops-operations-guide/" target="_blank" title="XOOPS Operations Manual">Manuel d'utilisation XOOPS</a> <br/><br/></p>
+<h4 class="odd">INSTRUCTIONS D'UTILISATION</h4>
+<p class="even">Pour configurer ce module, vous devez :</p>
+<ul>
+<li>Configurez vos préférences pour le module (voir 'Préférences') et éventuellement le bloc Profil si vous comptez l'utiliser (voir 'Blocs').</li>
+<li>Modifiez les catégories existantes ou ajoutez-en de nouvelles.</li>
+<li>Modifiez les champs existants ou ajoutez-en de nouveaux. Ici, vous pouvez spécifier quels champs seront visibles dans quelle catégorie et s'ils seront visibles lors de l'enregistrement de l'utilisateur.</li>
+<li>Définit l'ordre des étapes d'inscription.</li>
+<li>Et enfin, vous pouvez définir des autorisations pour des champs individuels : lesquels sont modifiables, lesquels peuvent être recherchés.<br/><br/></li>
+</ul>
+<h4 class="odd">Mesures anti-spam</h4>
+<p class="even">Pour minimiser les enregistrements de spam, procédez comme suit :</p>
+<ul>
+<li> allez dans le module Protector dans Admin, allez dans Préférences, puis en bas, à cette option :
+
+            "Arrêtez le spam du forum"
+            Vérifie les données POST par rapport aux spammeurs enregistrés sur la base de données www.stopforumspam.com. <br/>
+            Réglez-le sur "Bannir l'IP (sans limite)"
+        </li>
+<br/>
+<li> dans /class/captcha/config.php, assurez-vous que le mode est défini sur "text" :<br/><br/>
+<span style="font-style: italic;">     return $config = tableau(<br/>
+    'disabled' =&gt; false, // Désactiver CAPTCHA<br/>
+    'mode' =&gt; 'text', // mode par défaut, vous pouvez choisir 'text', 'image', 'recaptcha' (nécessite une clé API)<br/>
+    'nom' =&gt; 'xoopscaptcha', // nom du captcha<br/>
+    'skipmember' =&gt; true, // Ignorer la vérification CAPTCHA pour les membres<br/>
+    'maxattempts' =&gt; 10, // Nombre maximum de tentatives pour chaque session<br/>
+    );</span></li>
+<br/>
+<li> Dans le module Profil, allez dans Admin et dans l'étape Basique située à l'adresse :<br/>
+
+            /modules/profile/admin/step.php?id=1<br/>
+
+            définissez "Enregistrer après l'arrêt" sur "Non"
+        </li>
+<br/><br/>
+<li> Dans les Préférences de profil, définissez l'option « Utiliser le Captcha après la deuxième étape d'inscription » sur « Oui » (c'est la valeur par défaut)</li>
+<br/>
+<ul>
+<h4 class="odd">TUTORIEL</h4>
+<p class="even">Tutoriel à venir.<br/></p>
+ -----Contenu de l'aide ---------- 
+</ul></ul></div>
