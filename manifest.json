@@ -28,6 +28,15 @@
       "updated": "2026-05-04",
       "download": "https://github.com/XoopsLanguages/french/releases/download/latest/french-core-2.7.0.zip",
       "manifest_url": "https://raw.githubusercontent.com/XoopsLanguages/french/master/manifest.json"
+    },
+    "2.7.1": {
+      "lifecycle": "active",
+      "coverage": 98.2,
+      "provided": 3042,
+      "required": 3098,
+      "updated": "2026-07-25",
+      "download": "https://github.com/XoopsLanguages/french/releases/download/latest/french-core-2.7.1.zip",
+      "manifest_url": "https://raw.githubusercontent.com/XoopsLanguages/french/master/manifest.json"
     }
   },
   "modules": {},

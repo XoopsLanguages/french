@@ -1,0 +1,59 @@
+<div class="outer" id="help-template">
+<h1 class="head">Aide : Préférences</h1>
+<h4 class="odd">Descriptif</h4>
+<p class="even">
+        Les panneaux de préférences vous permettent de configurer vos préférences à l'échelle du site. Cela vaut la peine de prendre le temps de les parcourir car certains paramètres peuvent avoir un impact significatif sur les performances, la sécurité et la facilité d'utilisation de votre site.
+    </p>
+<h4 class="odd">Paramètres généraux</h4>
+<p class="even">
+        Ce sont les préférences les plus importantes et les plus fréquemment consultées. Vous définirez le nom du site et le slogan de votre site Web. Vous sélectionnerez également le thème et l’interface graphique d’administration par défaut. Et si vous devez travailler sur votre site Web, vous pouvez le fermer à tous les utilisateurs. Vous pouvez également définir le cache à l'échelle du module
+        fois.
+    </p>
+<h4 class="odd">Balises méta et pied de page</h4>
+<p class="even">
+        Les balises méta fournissent des informations sur vos informations – elles décrivent la nature de votre site Web. Leur utilité principale est d’aider les moteurs de recherche et leurs robots à indexer correctement votre site internet, c’est à dire d’aider les bonnes personnes à le trouver. Les informations que vous fournissez sont incluses dans l'en-tête de chaque site Web
+        page. Il doit représenter le contenu du site dans son ensemble – les méta-informations sont les mêmes sur chaque page, elles ne peuvent actuellement pas être personnalisées pour différents modules ou pages.<br/><br/>
+
+        Sachez que les principaux moteurs de recherche utilisent des stratégies différentes pour indexer les sites Web. Ils peuvent attribuer des pondérations différentes aux balises méta ou même les ignorer complètement. Une utilisation prudente des méta-informations peut aider votre site Web à obtenir un meilleur classement dans les moteurs de recherche, et il est utile de rechercher
+        des informations sur les stratégies d’indexation de vos référents dominants (voir le logfile de votre site). Cela peut vous aider à optimiser vos méta-informations ou d'autres aspects de la conception et du contenu de votre site pour améliorer votre classement. <br/><br/>
+
+        Essayez d'être précis et honnête en fournissant des méta-informations. N'essayez pas de '<em>manipuler</em>’ moteurs de recherche pour obtenir un meilleur classement – ​​ils peuvent reconnaître ce comportement et votre site peut être rétrogradé ou mis sur liste noire de leur index.
+
+        <br/><br/>Le <strong>Méta Copyright</strong> et <strong>Pied de page</strong> prennent tous deux en charge deux balises de substitution pour simplifier la maintenance.
+        <br/> - <strong>{X_SITEURL}</strong> sera remplacé par l'URL complète de la page principale de votre site.
+        <br/> - <strong>{X_YEAR}</strong> sera remplacé par l'année actuelle à quatre chiffres. Cela élimine le besoin de mettre à jour la date supérieure du droit d’auteur chaque année.
+    </p>
+<h4 class="odd">Options de censure des mots</h4>
+<p class="even">
+        XOOPS peut automatiquement censurer les mots indésirables susceptibles d'être publiés par les visiteurs de votre site et les remplacer par un terme générique alternatif de votre choix. La fonction de censure consomme certaines ressources système et peut ralentir quelque peu votre site. Il est désactivé par défaut.<br/><br/>
+
+        Pour mettre en œuvre la censure sur votre site, sélectionnez le bouton '<em>activer</em>’ bouton radio. Vous devez saisir une liste de mots indésirables dans le champ «<em>mots à censurer</em>’, en les séparant par le caractère barre verticale. Cette fonction n'est pas sensible à la casse. Entrez un terme de remplacement approprié dans le champ «<em>remplacer
+            gros mots avec</em>’ case. La valeur par défaut est #OOPS#.
+
+    </p>
+<h4 class="odd">Options de recherche</h4>
+<p class="even">
+        La fonction de recherche est l'un des outils les plus importants pour localiser des informations sur un site Web portail. La recherche XOOPS classe les résultats par module – les enregistrements sont identifiés comme des actualités, des téléchargements, des liens ou d'autres types selon les modules que vous avez installés. <br/><br/>
+
+        Les recherches globales de toutes les ressources de votre site sont activées par défaut. Si vous désactivez les recherches globales, cette fonctionnalité ne sera plus disponible et le bloc de recherche deviendra non fonctionnel.
+        La longueur minimale par défaut des mots-clés pour les recherches est de cinq caractères. Tous les termes plus courts seront ignorés. Ceci est utile pour contrôler la précision des recherches, mais pas très utile pour des termes comme « plan du site ». Les mots-clés courts ont tendance à être plus courants, ils ont donc tendance à renvoyer un plus grand
+        nombre d'enregistrements, dont beaucoup peuvent ne pas être pertinents. Les mots-clés plus longs ont tendance à récupérer moins d'enregistrements mais avec un degré de précision plus élevé.<br/><br/>
+
+        La recherche est relativement coûteuse en termes de calcul et donc l'exclusion des termes courts réduira la charge sur le serveur. Gardez toutefois à l’esprit qu’il est parfois utile de pouvoir effectuer une recherche à court terme.
+
+    </p>
+<h4 class="odd">Configuration de la messagerie</h4>
+<p class="even">
+        Cette section du panneau de contrôle est utilisée pour configurer votre courrier électronique pour le système. Il est recommandé de laisser la méthode de livraison par courrier électronique sur le paramètre par défaut « PHP (mail) ». Vous n'avez pas besoin de remplir les champs Sendmail ou SMTP, sauf si vous utilisez une autre option de livraison par e-mail.
+    </p>
+<h4 class="odd">Options d'authentification</h4>
+<p class="even">
+        Laissez-le simplement dans la base de données Xoops et vous pourrez ignorer toutes les autres options qu'il contient.<br/><br/>
+
+        Des serveurs LDAP ou Microsoft Active Directory ont été ajoutés pour l'authentification comme alternative aux utilisateurs Xoops normaux. La raison en est que dans de nombreuses entreprises, vous disposez déjà d'une base de données d'utilisateurs dans ADS ou LDAP, et ils peuvent l'utiliser pour se connecter à XOOPS et n'ont pas besoin d'enregistrer un autre compte.
+    </p>
+<h4 class="odd">Paramètres du module système</h4>
+<p class="even">
+        Ici, vous pouvez activer/désactiver chacune des sections Système, ainsi que spécifier les valeurs par défaut à l'échelle du système, par ex. pour le nombre d'avatars ou d'images affichés par page. Vous pouvez également sélectionner un éditeur par défaut pour les blocs, les commentaires et pour tous les modules.
+    </p>
+</div>
