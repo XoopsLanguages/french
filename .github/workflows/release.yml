@@ -30,28 +30,125 @@ jobs:
         id: meta
         run: |
           LANG=$(jq -r .language manifest.json)
+          TODAY=$(date +%Y-%m-%d)
           echo "lang=$LANG" >> "$GITHUB_OUTPUT"
+          echo "today=$TODAY" >> "$GITHUB_OUTPUT"
 
-      # ── Package core 2.7.0 ───────────────────────────────────────────────
+      # ── Package core 2.7.0 (preflight: warn + skip rather than fail) ───────
       - name: Package core 2.7.0
         if: ${{ hashFiles('core/2.7.0/**') != '' }}
         run: |
           LANG="${{ steps.meta.outputs.lang }}"
+          HAS_CONTENT=false
+          for d in htdocs install upgrade; do
+            [ -d "core/2.7.0/$d" ] && HAS_CONTENT=true
+          done
+          if [ "$HAS_CONTENT" = false ]; then
+            echo "::warning title=Incomplete language pack (${LANG})::core/2.7.0 has no htdocs/, install/, or upgrade/ directory yet. Nothing to package -- coverage will show 0% until translators add files."
+            exit 0
+          fi
           cd core/2.7.0
           zip -r "../../${LANG}-core-2.7.0.zip" htdocs/ install/ upgrade/ \
               --exclude "*.bat" --exclude "*.txt" --exclude "*/.git/*"
           cd ../..
-          echo "Packaged ${LANG}-core-2.7.0.zip"
+          if [ -s "${LANG}-core-2.7.0.zip" ]; then
+            echo "Packaged ${LANG}-core-2.7.0.zip"
+          else
+            echo "::warning title=Empty package (${LANG})::Zip produced no usable output for core 2.7.0."
+            rm -f "${LANG}-core-2.7.0.zip"
+          fi
 
       - name: Package core 2.7.1
         if: ${{ hashFiles('core/2.7.1/**') != '' }}
         run: |
           LANG="${{ steps.meta.outputs.lang }}"
+          HAS_CONTENT=false
+          for d in htdocs install upgrade; do
+            [ -d "core/2.7.1/$d" ] && HAS_CONTENT=true
+          done
+          if [ "$HAS_CONTENT" = false ]; then
+            echo "::warning title=Incomplete language pack (${LANG})::core/2.7.1 has no htdocs/, install/, or upgrade/ directory yet. Nothing to package -- coverage will show 0% until translators add files."
+            exit 0
+          fi
           cd core/2.7.1
           zip -r "../../${LANG}-core-2.7.1.zip" htdocs/ install/ upgrade/ \
               --exclude "*.bat" --exclude "*.txt" --exclude "*/.git/*"
           cd ../..
-          echo "Packaged ${LANG}-core-2.7.1.zip"
+          if [ -s "${LANG}-core-2.7.1.zip" ]; then
+            echo "Packaged ${LANG}-core-2.7.1.zip"
+          else
+            echo "::warning title=Empty package (${LANG})::Zip produced no usable output for core 2.7.1."
+            rm -f "${LANG}-core-2.7.1.zip"
+          fi
+
+      - name: Package core 2.7.3
+        if: ${{ hashFiles('core/2.7.3/**') != '' }}
+        run: |
+          LANG="${{ steps.meta.outputs.lang }}"
+          HAS_CONTENT=false
+          for d in htdocs install upgrade; do
+            [ -d "core/2.7.3/$d" ] && HAS_CONTENT=true
+          done
+          if [ "$HAS_CONTENT" = false ]; then
+            echo "::warning title=Incomplete language pack (${LANG})::core/2.7.3 has no htdocs/, install/, or upgrade/ directory yet. Nothing to package -- coverage will show 0% until translators add files."
+            exit 0
+          fi
+          cd core/2.7.3
+          zip -r "../../${LANG}-core-2.7.3.zip" htdocs/ install/ upgrade/ \
+              --exclude "*.bat" --exclude "*.txt" --exclude "*/.git/*"
+          cd ../..
+          if [ -s "${LANG}-core-2.7.3.zip" ]; then
+            echo "Packaged ${LANG}-core-2.7.3.zip"
+          else
+            echo "::warning title=Empty package (${LANG})::Zip produced no usable output for core 2.7.3."
+            rm -f "${LANG}-core-2.7.3.zip"
+          fi
+
+      - name: Package core 2.7.4
+        if: ${{ hashFiles('core/2.7.4/**') != '' }}
+        run: |
+          LANG="${{ steps.meta.outputs.lang }}"
+          HAS_CONTENT=false
+          for d in htdocs install upgrade; do
+            [ -d "core/2.7.4/$d" ] && HAS_CONTENT=true
+          done
+          if [ "$HAS_CONTENT" = false ]; then
+            echo "::warning title=Incomplete language pack (${LANG})::core/2.7.4 has no htdocs/, install/, or upgrade/ directory yet. Nothing to package -- coverage will show 0% until translators add files."
+            exit 0
+          fi
+          cd core/2.7.4
+          zip -r "../../${LANG}-core-2.7.4.zip" htdocs/ install/ upgrade/ \
+              --exclude "*.bat" --exclude "*.txt" --exclude "*/.git/*"
+          cd ../..
+          if [ -s "${LANG}-core-2.7.4.zip" ]; then
+            echo "Packaged ${LANG}-core-2.7.4.zip"
+          else
+            echo "::warning title=Empty package (${LANG})::Zip produced no usable output for core 2.7.4."
+            rm -f "${LANG}-core-2.7.4.zip"
+          fi
+
+      - name: Package core 2.8.0
+        if: ${{ hashFiles('core/2.8.0/**') != '' }}
+        run: |
+          LANG="${{ steps.meta.outputs.lang }}"
+          HAS_CONTENT=false
+          for d in htdocs install upgrade; do
+            [ -d "core/2.8.0/$d" ] && HAS_CONTENT=true
+          done
+          if [ "$HAS_CONTENT" = false ]; then
+            echo "::warning title=Incomplete language pack (${LANG})::core/2.8.0 has no htdocs/, install/, or upgrade/ directory yet. Nothing to package -- coverage will show 0% until translators add files."
+            exit 0
+          fi
+          cd core/2.8.0
+          zip -r "../../${LANG}-core-2.8.0.zip" htdocs/ install/ upgrade/ \
+              --exclude "*.bat" --exclude "*.txt" --exclude "*/.git/*"
+          cd ../..
+          if [ -s "${LANG}-core-2.8.0.zip" ]; then
+            echo "Packaged ${LANG}-core-2.8.0.zip"
+          else
+            echo "::warning title=Empty package (${LANG})::Zip produced no usable output for core 2.8.0."
+            rm -f "${LANG}-core-2.8.0.zip"
+          fi
 
       # ── Package older core versions (EOL — frozen zips) ─────────────────
       - name: Package EOL core versions
@@ -59,7 +156,7 @@ jobs:
           LANG="${{ steps.meta.outputs.lang }}"
           for ver_dir in core/*/; do
             ver=$(basename "$ver_dir")
-            if [ "$ver" != "2.7.0" ] && [ "$ver" != "2.7.1" ] && [ -d "$ver_dir" ]; then
+            if [ "$ver" != "2.7.0" ] && [ "$ver" != "2.7.1" ] && [ "$ver" != "2.7.3" ] && [ "$ver" != "2.7.4" ] && [ "$ver" != "2.8.0" ] && [ -d "$ver_dir" ]; then
               zip -r "${LANG}-core-${ver}.zip" "$ver_dir" \
                   --exclude "*.bat" --exclude "*/.git/*" || true
               echo "Packaged ${LANG}-core-${ver}.zip"
@@ -73,24 +170,125 @@ jobs:
           if [ -d "modules" ]; then
             for mod_dir in modules/*/; do
               mod=$(basename "$mod_dir")
+
+              # Unversioned legacy layout: modules/<mod>/language/...
+              if [ -d "${mod_dir}language" ]; then
+                zip -r "${LANG}-module-${mod}.zip" "$mod_dir" \
+                    --exclude "*.bat" --exclude "*/.git/*" || true
+                echo "Packaged ${LANG}-module-${mod}.zip"
+                continue
+              fi
+
               for ver_dir in "$mod_dir"*/; do
+                [ -d "$ver_dir" ] || continue
                 ver=$(basename "$ver_dir")
-                if [ -d "$ver_dir" ]; then
-                  zip -r "${LANG}-module-${mod}-${ver}.zip" "$ver_dir" \
-                      --exclude "*.bat" --exclude "*/.git/*" || true
+
+                # Legacy version folders are named "<mod> <version>".
+                # Strip the duplicated module name + separator so the asset
+                # is <lang>-module-<mod>-<version>.zip, matching manifest URLs.
+                for sep in " " "_" "-" "."; do
+                  if [ "${ver#"$mod$sep"}" != "$ver" ]; then
+                    ver="${ver#"$mod$sep"}"
+                    break
+                  fi
+                done
+                [ "$ver" = "$mod" ] && ver=""
+                ver=$(printf '%s' "$ver" | tr ' ' '-')
+
+                if [ -n "$ver" ]; then
+                  name="${LANG}-module-${mod}-${ver}"
+                else
+                  name="${LANG}-module-${mod}"
                 fi
+                zip -r "${name}.zip" "$ver_dir" \
+                    --exclude "*.bat" --exclude "*/.git/*" || true
+                echo "Packaged ${name}.zip"
               done
             done
           fi
 
-      # ── Update manifest with current timestamp ───────────────────────────
-      - name: Stamp manifest with release date
+      # ── Recompute coverage + stamp manifest (Python -- no jq quoting risk) ──
+      - name: Recompute coverage and stamp manifest
         run: |
-          TODAY=$(date +%Y-%m-%d)
-          jq --arg date "$TODAY" --arg ver "2.7.0" '.core[$ver].updated = $date' manifest.json > manifest.tmp
-          mv manifest.tmp manifest.json
-          jq --arg date "$TODAY" 'if .core["2.7.1"] then .core["2.7.1"].updated = $date else . end' manifest.json > manifest.tmp
-          mv manifest.tmp manifest.json
+          python3 << 'PYEOF'
+          import json, re, os, glob, datetime
+
+          manifest_path = "manifest.json"
+          with open(manifest_path, encoding="utf-8") as f:
+              manifest = json.load(f)
+
+          define_re = re.compile(r"^\s*define\s*\(\s*['\"]([A-Z_][A-Z0-9_]*)['\"]", re.MULTILINE)
+          today = datetime.date.today().isoformat()
+          lang = manifest.get("language", "")
+
+          for ver in ("2.7.0", "2.7.1", "2.7.3", "2.7.4", "2.8.0"):
+              entry = manifest.get("core", {}).get(ver)
+              if entry is None:
+                  continue
+
+              contract_path = f"core/{ver}/docs/language-contracts/required-constants.json"
+              required = {}
+              if os.path.isfile(contract_path):
+                  with open(contract_path, encoding="utf-8") as cf:
+                      required = json.load(cf).get("constants", {})
+
+              provided = set()
+              for path in glob.glob(f"core/{ver}/htdocs/**/*.php", recursive=True):
+                  with open(path, encoding="utf-8", errors="replace") as pf:
+                      provided.update(define_re.findall(pf.read()))
+
+              total = len(required)
+              hit   = len(set(required.keys()) & provided) if total else 0
+              coverage = round((hit / total) * 100, 1) if total else 0.0
+
+              entry["coverage"] = coverage
+              entry["provided"] = hit
+              entry["required"] = total
+              entry["updated"]  = today
+              entry["pinned_tag"] = f"core-{ver}-{today}"
+              entry["pinned_download"] = (
+                  f"https://github.com/XoopsLanguages/{lang}"
+                  f"/releases/download/core-{ver}-{today}/{lang}-core-{ver}.zip"
+              )
+              print(f"{lang} core {ver}: {hit}/{total} ({coverage}%)")
+
+          with open(manifest_path, "w", encoding="utf-8") as f:
+              json.dump(manifest, f, ensure_ascii=False, indent=2)
+          PYEOF
+
+      # ── Dated, immutable release (source of truth for pinned installs) ─────
+      - name: Create dated release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: core-2.7.0-${{ steps.meta.outputs.today }}
+          name: "core 2.7.0 -- ${{ steps.meta.outputs.today }}"
+          body: |
+            Auto-packaged language assets, pinned to this date. Immutable --
+            a new dated tag is created each day assets change. The rolling
+            'latest' release below always points to the newest build.
+          files: |
+            *.zip
+            manifest.json
+          make_latest: false
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      # ── Remove stale assets so renamed zips don't accumulate ─────────────
+      - name: Purge existing assets from the rolling 'latest' release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if gh release view latest --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release view latest --repo "$GITHUB_REPOSITORY" \
+                --json assets --jq '.assets[].name' > /tmp/assets.txt || true
+            while IFS= read -r asset; do
+              [ -n "$asset" ] || continue
+              echo "Deleting stale asset: $asset"
+              gh release delete-asset latest "$asset" \
+                  --repo "$GITHUB_REPOSITORY" --yes || true
+            done < /tmp/assets.txt
+          else
+            echo "No 'latest' release yet - nothing to purge."
+          fi
 
       # ── Create or update the rolling \'latest\' GitHub Release ─────────────
       - name: Upload to GitHub Release
