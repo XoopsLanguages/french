@@ -24,8 +24,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
-      # ── Discover language name from manifest.json ────────────────────────
+      # ── Discover language name from manifest.json ────────────────────────────
       - name: Read manifest
         id: meta
         run: |
@@ -34,9 +36,31 @@ jobs:
           echo "lang=$LANG" >> "$GITHUB_OUTPUT"
           echo "today=$TODAY" >> "$GITHUB_OUTPUT"
 
-      # ── Package core 2.7.0 (preflight: warn + skip rather than fail) ───────
+      # ── Work out exactly which tracked files this push touched, so only the ───
+      # ── assets that actually changed get rebuilt and re-uploaded. Re-uploading ──
+      # ── an unchanged asset to a GitHub Release resets its download counter ────
+      # ── and "updated" timestamp, so a full rebuild should only happen for a ────
+      # ── manual dispatch or a repo's very first push. ────────────────────────
+      - name: Determine changed paths
+        id: changes
+        run: |
+          BEFORE="${{ github.event.before }}"
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+            echo "Full rebuild (manual dispatch, or no prior commit to diff against)."
+            CHANGED=$(git ls-files core modules themes manifest.json)
+          else
+            CHANGED=$(git diff --name-only "$BEFORE" "${{ github.sha }}" -- core modules themes manifest.json)
+          fi
+          echo "Changed paths for this run:"
+          echo "$CHANGED"
+          {
+            echo "files<<CHANGED_FILES_EOF"
+            echo "$CHANGED"
+            echo "CHANGED_FILES_EOF"
+          } >> "$GITHUB_OUTPUT"
+
       - name: Package core 2.7.0
-        if: ${{ hashFiles('core/2.7.0/**') != '' }}
+        if: ${{ contains(steps.changes.outputs.files, 'core/2.7.0/') }}
         run: |
           LANG="${{ steps.meta.outputs.lang }}"
           HAS_CONTENT=false
@@ -59,7 +83,7 @@ jobs:
           fi
 
       - name: Package core 2.7.1
-        if: ${{ hashFiles('core/2.7.1/**') != '' }}
+        if: ${{ contains(steps.changes.outputs.files, 'core/2.7.1/') }}
         run: |
           LANG="${{ steps.meta.outputs.lang }}"
           HAS_CONTENT=false
@@ -82,7 +106,7 @@ jobs:
           fi
 
       - name: Package core 2.7.3
-        if: ${{ hashFiles('core/2.7.3/**') != '' }}
+        if: ${{ contains(steps.changes.outputs.files, 'core/2.7.3/') }}
         run: |
           LANG="${{ steps.meta.outputs.lang }}"
           HAS_CONTENT=false
@@ -105,7 +129,7 @@ jobs:
           fi
 
       - name: Package core 2.7.4
-        if: ${{ hashFiles('core/2.7.4/**') != '' }}
+        if: ${{ contains(steps.changes.outputs.files, 'core/2.7.4/') }}
         run: |
           LANG="${{ steps.meta.outputs.lang }}"
           HAS_CONTENT=false
@@ -128,7 +152,7 @@ jobs:
           fi
 
       - name: Package core 2.8.0
-        if: ${{ hashFiles('core/2.8.0/**') != '' }}
+        if: ${{ contains(steps.changes.outputs.files, 'core/2.8.0/') }}
         run: |
           LANG="${{ steps.meta.outputs.lang }}"
           HAS_CONTENT=false
@@ -150,29 +174,36 @@ jobs:
             rm -f "${LANG}-core-2.8.0.zip"
           fi
 
-      # ── Package older core versions (EOL — frozen zips) ─────────────────
+      # ── Package older core versions (EOL — frozen zips), only the ones that ────
+      # ── actually changed in this push ──────────────────────────────────────
       - name: Package EOL core versions
         run: |
           LANG="${{ steps.meta.outputs.lang }}"
+          CHANGED="${{ steps.changes.outputs.files }}"
           for ver_dir in core/*/; do
             ver=$(basename "$ver_dir")
-            if [ "$ver" != "2.7.0" ] && [ "$ver" != "2.7.1" ] && [ "$ver" != "2.7.3" ] && [ "$ver" != "2.7.4" ] && [ "$ver" != "2.8.0" ] && [ -d "$ver_dir" ]; then
-              zip -r "${LANG}-core-${ver}.zip" "$ver_dir" \
-                  --exclude "*.bat" --exclude "*/.git/*" || true
-              echo "Packaged ${LANG}-core-${ver}.zip"
-            fi
+            case "$ver" in
+              2.7.0|2.7.1|2.7.3|2.7.4|2.8.0) continue ;;
+            esac
+            [ -d "$ver_dir" ] || continue
+            echo "$CHANGED" | grep -qF "core/$ver/" || continue
+            zip -r "${LANG}-core-${ver}.zip" "$ver_dir" \
+                --exclude "*.bat" --exclude "*/.git/*" || true
+            echo "Packaged ${LANG}-core-${ver}.zip"
           done
 
-      # ── Package module translations ──────────────────────────────────────
+      # ── Package module translations, only modules/versions that changed ────
       - name: Package module translations
         run: |
           LANG="${{ steps.meta.outputs.lang }}"
+          CHANGED="${{ steps.changes.outputs.files }}"
           if [ -d "modules" ]; then
             for mod_dir in modules/*/; do
               mod=$(basename "$mod_dir")
 
               # Unversioned legacy layout: modules/<mod>/language/...
               if [ -d "${mod_dir}language" ]; then
+                echo "$CHANGED" | grep -qF "$mod_dir" || continue
                 zip -r "${LANG}-module-${mod}.zip" "$mod_dir" \
                     --exclude "*.bat" --exclude "*/.git/*" || true
                 echo "Packaged ${LANG}-module-${mod}.zip"
@@ -181,6 +212,7 @@ jobs:
 
               for ver_dir in "$mod_dir"*/; do
                 [ -d "$ver_dir" ] || continue
+                echo "$CHANGED" | grep -qF "$ver_dir" || continue
                 ver=$(basename "$ver_dir")
 
                 # Legacy version folders are named "<mod> <version>".
@@ -207,7 +239,7 @@ jobs:
             done
           fi
 
-      # ── Recompute coverage + stamp manifest (Python -- no jq quoting risk) ──
+      # ── Recompute coverage + stamp manifest (Python — no jq quoting risk) ──
       - name: Recompute coverage and stamp manifest
         run: |
           python3 << 'PYEOF'
@@ -256,41 +288,31 @@ jobs:
               json.dump(manifest, f, ensure_ascii=False, indent=2)
           PYEOF
 
-      # ── Dated, immutable release (source of truth for pinned installs) ─────
+      # ── Dated, immutable release for whatever changed this run (source of ────
+      # ── truth for pinned installs). Only created when this run actually ──────
+      # ── packaged something. ──────────────────────────────────────────────
       - name: Create dated release
+        if: ${{ hashFiles('*.zip') != '' }}
         uses: softprops/action-gh-release@v3
         with:
-          tag_name: core-2.7.0-${{ steps.meta.outputs.today }}
-          name: "core 2.7.0 -- ${{ steps.meta.outputs.today }}"
+          tag_name: release-${{ steps.meta.outputs.today }}
+          name: "Language pack build -- ${{ steps.meta.outputs.today }}"
           body: |
-            Auto-packaged language assets, pinned to this date. Immutable --
-            a new dated tag is created each day assets change. The rolling
-            'latest' release below always points to the newest build.
+            Auto-packaged language assets for the files that changed in this
+            push, pinned to this date. Immutable -- a new dated tag is
+            created each day assets change. The rolling 'latest' release
+            below always points to the newest build.
           files: |
             *.zip
             manifest.json
           make_latest: false
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      # ── Remove stale assets so renamed zips don't accumulate ─────────────
-      - name: Purge existing assets from the rolling 'latest' release
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          if gh release view latest --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-            gh release view latest --repo "$GITHUB_REPOSITORY" \
-                --json assets --jq '.assets[].name' > /tmp/assets.txt || true
-            while IFS= read -r asset; do
-              [ -n "$asset" ] || continue
-              echo "Deleting stale asset: $asset"
-              gh release delete-asset latest "$asset" \
-                  --repo "$GITHUB_REPOSITORY" --yes || true
-            done < /tmp/assets.txt
-          else
-            echo "No 'latest' release yet - nothing to purge."
-          fi
-
-      # ── Create or update the rolling \'latest\' GitHub Release ─────────────
+      # ── Update the rolling 'latest' release. Only assets that changed this ───
+      # ── run are re-uploaded; action-gh-release replaces an asset only when ───
+      # ── a file with that exact name is re-uploaded, so every other asset ─────
+      # ── (and its download count / timestamp) is left completely untouched. ───
+      # ── No purge step needed -- and none should be added back. ──────────────
       - name: Upload to GitHub Release
         uses: softprops/action-gh-release@v3
         with:
